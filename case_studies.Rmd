@@ -1,0 +1,1632 @@
+---
+title: "Case Message Study Script"
+output: html_document
+date: "`r Sys.Date()`"
+editor_options: 
+  chunk_output_type: console
+---
+
+#Libraries
+```{r}
+library(tidyverse)
+library(patchwork)
+library(lme4)
+library(lmerTest)
+library(psych)
+library(effectsize)
+library(mediation)
+library(car)
+library(stringdist)
+library(clue)
+library(afex)
+library(sjPlot)
+library(emmeans)
+
+#for the notation
+options(scipen=999)
+```
+
+#STUDY 1
+
+##Study 1: Load and clean data
+```{r}
+#Study 1a
+d.p <- read.csv("Study1a.csv") %>% 
+  filter(Finished == 1)
+
+d1a <- d.p %>%
+  filter(att == "4" | is.na(att)) %>% 
+  filter(att.1 == "4" | is.na(att.1)) %>% 
+  pivot_longer(cols = starts_with(c("a.", "i.", "u.", "p.", "v.")),
+               names_to = c(".value", "category"),
+               names_sep = "\\.",
+               values_drop_na = TRUE) %>% 
+  dplyr::select(id, category, a, i, u, p, v) %>% 
+  mutate(category = dplyr::recode(category,
+                           "g1" = "general 1",
+                           "g2" = "general 2",
+                           "n1" = "narrative 1",
+                           "n2" = "narrative 2")) %>% 
+  separate(col = category, into = c("condition", "time"), sep = " ") %>%
+  mutate(condition = as.factor(condition), time = as.factor(time)) %>% 
+  mutate(x = (a+i+u+p+v)/5) %>% 
+  mutate(condition = dplyr::recode(condition,
+                            "general" = "message",
+                            "narrative" = "case"))
+
+#Study 1b
+#Data from Part 2
+i.p <- read.csv("Study1b.csv") %>% 
+  filter(Finished == 1)
+
+d1b <- i.p %>%
+  filter(if_any(contains("att"), ~.x == "4" | is.na(.x))) %>% 
+  pivot_longer(cols = contains(c("_a", "_i", "_u", "_p", "_v")),
+               names_to = c(".item", "category"),
+               names_sep = "\\_",
+               values_drop_na = TRUE) %>% 
+  filter(category != "att") %>% 
+  mutate(category = substr(category, 1, 1)) %>% 
+  spread(key = category, value = value) %>% 
+  mutate(x = (a+i+u+p+v)/5) %>% 
+  mutate(summary = as.factor(.item)) %>%
+  dplyr::select(-.item) %>% 
+  rename(condition = FL_77_DO)
+```
+
+
+###Study 1: Analyze
+```{r}
+# # # # Preregistered # # # #
+p_values <- list()
+
+#initial
+#c1 vs m1
+d.time1 <- d1a %>% 
+  filter(time == 1)
+m1 <- t.test(x ~ condition, d.time1)
+m1
+cohens_d(x ~ condition, data = d.time1)
+p_values$m1 <- m1$p.value
+
+#paired
+#c1 vs c2
+d.c <- d1a %>% 
+  filter(condition == "case")
+m2 <- t.test(x ~ time, d.c, paired = T)
+m2
+cohens_d(x ~ time, data = d.c)
+p_values$m2 <- m2$p.value
+
+#m1 vs m2
+d.m <- d1a %>% 
+  filter(condition == "message")
+m3 <- t.test(x ~ time, d.m, paired = T)
+m3
+cohens_d(x ~ time, data = d.m)
+p_values$m3 <- m3$p.value
+
+#c2 vs m2
+d.time2 <- d1a %>% 
+  filter(time == 2)
+m4 <- t.test(x ~ condition, d.time2)
+m4
+cohens_d(x ~ condition, data = d.time2)
+p_values$m4 <- m4$p.value
+
+#unpaired
+#c3 vs m3
+m5 <- t.test(x ~ condition, d1b)
+m5
+cohens_d(x ~ condition, data = d1b)
+p_values$m5 <- m5$p.value
+
+#corrected p-values
+p.adjust(p_values, method = "holm")
+
+# # # # Exploratory # # # #
+#Part 1 full scale analysis
+m <- lmer(x ~ condition * time + (1|id), d1a)
+summary(m)
+emm_int <- emmeans(m, pairwise ~ condition | time)
+eff_size(emm_int, sigma = sd(d1a$x), edf = df.residual(m))
+
+#Part 2 with item properly added as a random variable
+m <- lmer(x ~ condition + (1|summary), d1b)
+summary(m)
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+# # # Scale validation # # #
+items <- d1a[, c("a", "u", "v", "i", "p")]
+alpha(items)
+
+items <- d1b[, c("a", "u", "v", "i", "p")]
+alpha(items)
+```
+
+##Study 1: Visualize
+```{r}
+#merge datasets
+d1b <- dplyr::select(d1b, -summary)
+d1b$time <- 3
+d1b$time <- as.factor(d1b$time)
+d1_visualization <- bind_rows(d1a, d1b)
+
+#rename levels
+d1_visualization$time <- factor(d1_visualization$time, labels = c("initial rating", "second rating", "judges' rating of actual insight"))
+
+#set order
+ggplot(d1_visualization, aes(x = time, y = x, color = condition, group = condition)) +
+  geom_point(position = position_jitter(width = 0.2, height = 0.15), size = 4, alpha = 0.15) +
+  stat_summary(fun = mean, geom = "line", linewidth = 1.25, alpha = 0.6) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0, linewidth = 1.5, alpha = 0.8) +
+  stat_summary(fun = mean, geom = "point",  aes(shape = condition), size = 3, fill = "white", stroke = 1) +
+  scale_color_manual(values = c("message" = "#4C72B0", "case" = "#55A868")) +
+  scale_shape_manual(values = c("message" = 21, "case" = 23)) + 
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "", y = "Mean Insight Score", title = "") +
+  theme_minimal() +
+  theme(
+    legend.position = "top", 
+    legend.title = element_blank(),
+    text = element_text(size = 14, family = "Arial"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+```
+
+
+
+
+
+
+
+
+
+
+
+
+#STUDY 2
+
+##Study 2: Load and clean datasets
+```{r}
+#Study 2a
+d.p <- read.csv("Study2a.csv") %>% 
+  filter(Finished == 1)
+
+d2a <- d.p %>%
+  filter(att_t == "4" | is.na(att_t)) %>% 
+  filter(att_s == "4" | is.na(att_s)) %>% 
+  dplyr::select(-q_s_DO, -q_t_DO) %>% 
+  pivot_longer(cols = starts_with(c("a.", "i.", "u.", "p.", "v.", "q_")),
+               names_to = c(".value", "stimulus_set"),
+               names_sep = "\\_",
+               values_drop_na = TRUE) %>% 
+  pivot_longer(cols = starts_with(c("a.", "i.", "u.", "p.", "v.")),
+               names_to = c(".value", "condition"),
+               names_sep = "\\.",
+               values_drop_na = TRUE) %>% 
+  dplyr::select(stimulus_set, condition, a, i, u, p, v, q) %>% 
+  mutate(condition = dplyr::recode(condition,
+                           "c1" = "case",
+                           "m1" = "message")) %>% 
+  mutate(condition = as.factor(condition)) %>% 
+  mutate(x = (a+i+u+p+v)/5) %>% 
+  mutate(stimulus_set = dplyr::recode(stimulus_set,
+                            "s" = "Semmelweis",
+                            "t" = "Dominos"))
+  
+#Study 2b
+i.p <- read.csv("Study2b.csv") %>% 
+  filter(Finished == 1)
+
+d2b <- i.p %>%
+  pivot_longer(cols = contains(c("a.", "i.", "u.", "p.", "v.", "att")),
+             names_to = c("report", "question", "stimulus_set"),
+             names_sep = "_",
+             values_drop_na = TRUE) %>% 
+   separate(question, into = c("question", "condition"), sep = "\\.", extra = "merge") %>% 
+  spread(key = question, value = value) %>% 
+  filter(att == 4) %>% 
+  mutate(x = (a+i+u+p+v)/5) %>% 
+  mutate(report = paste(report, condition, stimulus_set, sep = "")) %>% 
+  mutate(summary = as.factor(report)) %>% 
+  mutate(condition = dplyr::recode(condition,
+                           "c" = "case",
+                           "m" = "message")) %>% 
+  mutate(condition = as.factor(condition)) %>%
+  mutate(stimulus_set = dplyr::recode(stimulus_set,
+                            "s" = "Semmelweis",
+                            "d" = "Dominos"))
+```
+
+##Study 2: Analyze data
+```{r}
+# # # # Preregistered # # # #
+p_values <- list()
+
+#Part 1
+#x ~ condition*stimulus_set
+#type iii anova
+m <- Anova(lm(x ~ condition * stimulus_set, data = d2a), type = 3)
+m
+effect_sizes <- eta_squared(m, partial = TRUE)
+effect_sizes
+
+#interaction insignificant -> type ii anova
+m <- Anova(lm(x ~ condition * stimulus_set, data = d2a), type = 2)
+m
+effect_sizes <- eta_squared(m, partial = TRUE)
+effect_sizes
+
+#q ~ condition*stimulus_set
+m <- glm(q ~ condition*stimulus_set, family = "binomial", d2a)
+summary(m)
+#effect size
+tab_model(m, transform = "exp")
+
+#Part 2
+#x ~ condition*stimulus_set + summary
+m <- lmer(x ~ condition*stimulus_set + (1|summary), d2b)
+summary(m)
+# Standardized coefficients
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+#corrected p-values for case-message comparisons
+p <- c(0.001735, 0.0478, 0.3468)
+p.adjust(p, method = "holm")
+
+# # # # Exploratory # # # #
+#Part 1
+#x ~ condition*stimulus_set
+m <- lmer(x ~ condition + (1|stimulus_set), d2a)
+summary(m)
+# Standardized coefficients
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+#q ~ condition*stimulus_set
+m <- glmer(q ~ condition + (1|stimulus_set), family = "binomial", d2a)
+summary(m)
+#effect size
+tab_model(m, transform = "exp")
+
+
+#Part 2
+#x ~ condition*stimulus_set + report
+m <- lmer(x ~ condition + (1|stimulus_set) + (1|summary), d2b)
+summary(m)
+# Standardized coefficients
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+```
+
+##Study 2: Visualize data
+```{r}
+#merge datasets
+d2a$rating <- 1
+d2b$rating <- 2
+d2_visualization <- bind_rows(d2a, d2b)
+
+#set order
+d2_visualization <- d2_visualization %>% 
+  mutate(rating = case_when(rating == 1 ~ "participant perceptions of insight",
+                            rating == 2 ~ "judges' rating of actual insight"))
+d2_visualization$rating <- factor(d2_visualization$rating, levels = c("participant perceptions of insight", "judges' rating of actual insight"))
+d2_visualization$condition <- factor(d2_visualization$condition, levels = c("message", "case"))
+
+
+p1 <- ggplot(d2_visualization, aes(x = stimulus_set, y = x, fill = condition)) +
+  geom_violin(alpha = 0.1, color = NA, position = position_dodge(width = 0.8)) +
+  geom_point(aes(color = condition), position = position_jitterdodge(jitter.width = 0.3, jitter.height = 0.1, dodge.width = 0.8), 
+             size = 3.5, shape = 21, alpha = 0.2) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0, color = "black", linewidth = 1.5,
+               position = position_dodge(width = 0.8), aes(group = condition)) +
+    stat_summary(fun = mean, geom = "point",
+               aes(shape = condition),
+               size = 3, color = "black", fill = "white",
+               position = position_dodge(width = 0.8)) +
+  scale_shape_manual(values = c("message" = 21, "case" = 23)) +
+  facet_wrap(~rating) +
+  scale_fill_manual(values = c("message" = "#A51C30", "case" = "#666666")) +
+  scale_color_manual(values = c("message" = "#A51C30", "case" = "#666666")) +
+  labs(x = "", y = "Mean Insight Score", title = "A. Insight Ratings") +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = 14, family = "Arial"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    strip.text = element_text(face = "bold")
+  )
+
+#summarize data to calculate the proportion of 1's in q
+d2a_summary <- d2a %>%
+  group_by(stimulus_set, condition) %>%
+  summarise(
+    proportion_correct = mean(q),
+    n = n(),
+    se = sqrt(proportion_correct * (1 - proportion_correct) / n),
+    ci_low  = pmax(0, proportion_correct - 1.96 * se),
+    ci_high = pmin(1, proportion_correct + 1.96 * se),
+    .groups = "drop"
+  )
+
+d2a_summary$condition <- factor(d2a_summary$condition, levels = c("message", "case"))
+
+#plot the data
+p2 <- ggplot(d2a_summary, aes(x = stimulus_set, y = proportion_correct, fill = condition)) +
+  geom_col(position = position_dodge(width = 0.8), color = "#D3D3D3", alpha = 0.15) +
+  geom_errorbar(
+    aes(ymin = ci_low, ymax = ci_high, group = condition), 
+    position = position_dodge(width = 0.8),
+    width = 0,
+    linewidth = 1.5,
+    color = "black"
+  ) +
+  geom_point(aes(shape = condition),
+             position = position_dodge(width = 0.8),
+             size = 3, stroke = 0.5,
+             fill = "white", color = "black",
+             show.legend = c(fill = FALSE, shape = TRUE)) +
+  scale_fill_manual(values = c("message" = "#A51C30", "case" = "#666666")) +
+  scale_shape_manual(values = c("message" = 21, "case" = 23)) +
+  labs(x = "", y = "Proportion of correct scores on quiz", title = "B. Quiz Performance") +
+  theme_minimal() +
+  theme(
+    legend.position = "right",
+    legend.title = element_blank(),
+    text = element_text(size = 14, family = "Arial"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    strip.text = element_text(face = "bold")
+  )
+
+#combine plots
+p1 + p2 + plot_layout(ncol = 2, widths = c(1, 0.2))
+```
+
+
+
+
+
+
+
+#Study 3
+
+##Study 3a
+
+###Study 3a: Load and clean data
+
+NOTE: THIS CHUNK WILL NOT RUN, BECAUSE STUDY 3 HAD TO BE MADE ANONYMOUS. INSTEAD, REFER TO NEXT CHUNK.
+
+```{r}
+# Study 5pre
+d.p <- read.csv("Study3pre.csv")
+d3pre <- d.p %>%
+  mutate(across(c(Q1, Q2, Q3, Q4, Q5, Q6), as.numeric)) %>%
+  mutate(pre_test_score = (Q1 + Q2 + Q3 + Q4 + Q5 + Q6) / 6) %>% 
+  dplyr:: select(name, pre_test_score) %>%
+  group_by(name) %>%
+  filter(n() == 1) %>%
+  ungroup()
+
+# Study 5post
+d.p <- read.csv("Study3post.csv")
+d3post <- d.p %>%
+  mutate(across(c(Q1, Q2, Q3, Q4, Q5, Q6, a, i, u, p, v), as.numeric)) %>% 
+  mutate(post_test_score = (Q1 + Q2 + Q3 + Q4 + Q5 + Q6) / 6) %>% 
+  mutate(x = (a+i+u+p+v)/5) %>% 
+  dplyr::select(name, post_test_score, x, learn) %>% 
+  group_by(name) %>%
+  filter(n() == 1) %>%
+  ungroup()
+
+# Compute full Jaro-Winkler distance matrix
+dist_matrix <- stringdistmatrix(d3post$name, d3pre$name, method = "jw")
+# solve the "optimal assignment" problem
+assignment <- solve_LSAP(dist_matrix)
+
+# Create matched dataset
+matched <- tibble(
+  post_name = d3post$name,
+  pre_name = d3pre$name[assignment],
+  distance = diag(dist_matrix[, assignment]),
+  post_test_score = d3post$post_test_score,
+  pre_test_score = d3pre$pre_test_score[assignment],
+  x = d3post$x
+) %>%
+  mutate(delta = post_test_score - pre_test_score)
+
+# Filter out bad matches
+d3 <- matched %>%
+  filter(distance < 0.20) %>% 
+  # only one clearly inconsistent name "zhang" versus "wang" last name
+  filter(post_name != "crystal zhang")
+
+# paired t-test comparing scores on the quiz before and after the lesson
+d3_ttest <- d3 %>% 
+  pivot_longer(cols = c(pre_test_score, post_test_score),
+               names_to = "time",
+               values_to = "score")
+```
+
+This chunk will run in substitution for the one above
+```{r}
+# read in anonymous csv
+d3 <- read.csv("d3_anonymous.csv")
+
+# remove one inconsistent name (which corresponds to 5)
+d3 <- d3 %>%
+  filter(post_name != "5")
+
+# make t-test dataframe
+d3_ttest <- d3 %>% 
+  pivot_longer(cols = c(pre_test_score, post_test_score),
+               names_to = "time",
+               values_to = "score")
+```
+
+
+###Study 3a: Analyses
+```{r}
+# effect of lesson on learning general message
+m <- t.test(score ~ time, d3_ttest, paired = T)
+m
+cohens_d(score ~ time, data = d3_ttest)
+
+# a linear mixed effects model testing the correlation between insight ratings and change in quiz scores (with participant id as a random intercept)
+# have to deviate from prereg because the random effect is literally unrunable...
+m <- lm(x ~ delta, d3)
+summary(m)
+# Standardized coefficients
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+# # # # Exploratory # # # #
+# remove inattentive students
+d3_positive <- d3 %>% 
+  filter(delta >= 0)
+# analysis
+m <- lm(x ~ delta, d3_positive)
+summary(m)
+# Standardized coefficients
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+```
+
+##Study 3b
+
+###Study 3b: Load and clean data
+```{r}
+#Data from Part 2
+i.p <- read.csv("Study3b.csv")
+
+d3b <- i.p %>%
+  filter(if_any(contains("att"), ~.x == "4" | is.na(.x))) %>%
+  pivot_longer(cols = contains(c("_a", "_i", "_u", "_p", "_v")),
+               names_to = c(".item", "category"),
+               names_sep = "\\_",
+               values_drop_na = TRUE) %>%
+  filter(category != "att") %>%
+  mutate(category = substr(category, 1, 1)) %>%
+  spread(key = category, value = value) %>%
+  filter(a != "") %>%
+  mutate(across(c(a, i, u, p, v), as.numeric)) %>%
+  mutate(x = (a+i+u+p+v)/5) %>%
+  mutate(summary = as.factor(.item)) %>%
+  dplyr::select(-.item) %>%
+  rename(condition = FL_4_DO)
+```
+
+###Study 3b: Analyses
+```{r}
+m <- lmer(x ~ condition + (1|summary), d3b)
+summary(m)
+# Standardized coefficients
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+```
+
+###Study 3: Visualization
+```{r}
+# correlation values
+cor_test_all <- cor.test(d3$delta, d3$x)
+cor_test_positive <- cor.test(d3_positive$delta, d3_positive$x)
+
+# define colors for anonymous school 
+sp_colors <- c("Pre Test" = "#00204E", "Post Test" = "#A6192E")
+condition_colors <- c("uninsightful" = "#00204E", "insightful" = "#A6192E") 
+
+# define factor levels
+d3_ttest <- d3_ttest %>%
+  mutate(time = factor(time, levels = c("pre_test_score", "post_test_score"),
+                       labels = c("Pre Test", "Post Test")))
+d3b <- d3b %>%
+  mutate(condition = factor(condition, levels = c("uninsightful", "insightful")))
+
+# Create learning plot
+p1 <- ggplot(d3_ttest, aes(x = time, y = score, color = time)) +
+  geom_violin(alpha = 0.5) +
+  geom_jitter(width = 0.15, alpha = 0.1, size = 5) +
+  stat_summary(fun = mean, geom = "line", aes(group = 1), linewidth = 1.5, alpha = 0.8, color = "black") +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0, linewidth = 2, alpha = 0.8) +
+  stat_summary(fun = mean, geom = "point", size = 4, shape = 21, fill = "white", alpha = 1) +
+  scale_color_manual(values = sp_colors) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "", y = "Test Score", title = "A. Change in Test Scores") +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = 14, family = "Arial"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+
+# Create plot 2a (preregistered analysis with all score changes)
+corr_text_all <- paste0("r = ", round(cor_test_all$estimate, 2), 
+                         ", p = ", scales::pvalue(cor_test_all$p.value, accuracy = 0.001))
+
+p2a <- ggplot(d3, aes(x = delta, y = x)) +
+  geom_jitter(width = 0.02, height = 0.1, color = "#00204E", size = 5, alpha = 0.1) +
+  geom_smooth(method = "lm", se = TRUE, color = "#A6192E", fill = "#A6192E", alpha = 0.2, linewidth = 1.5) +
+  geom_text(
+    aes(
+      x = 0.6,
+      y = 7
+    ),
+    label = corr_text_all,
+    hjust = 1,
+    size = 5,
+    fontface = "bold",
+    color = "black",
+  ) +
+  labs(x = "Test Score Change", y = "Perceived Insight", 
+       title = "B. All Students") +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 14, family = "Arial"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+
+# Create plot 2b (exploratory analysis with only positive score changes)
+corr_text_positive <- paste0("r = ", round(cor_test_positive$estimate, 2), 
+                            ", p = ", scales::pvalue(cor_test_positive$p.value, accuracy = 0.001))
+
+p2b <- ggplot(d3_positive, aes(x = delta, y = x)) +
+  geom_jitter(width = 0.02, height = 0.1, color = "#00204E", size = 5, alpha = 0.1) +
+  geom_smooth(method = "lm", se = TRUE, color = "#A6192E", fill = "#A6192E", alpha = 0.2, linewidth = 1.5) +
+  geom_text(
+    aes(
+      x = 0.7,
+      y = 7
+    ),
+    label = corr_text_positive,
+    hjust = 1,
+    size = 5,
+    fontface = "bold",
+    color = "black",
+  ) +
+  labs(x = "Test Score Change", y = "", 
+       title = "Students Who Learned") +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 14, family = "Arial"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+
+
+# Plot 3: Third party ratings (study 3b)
+d3b_summary <- d3b %>%
+  group_by(condition) %>%
+  mutate(condition = factor(condition, levels = c("uninsightful", "insightful"))) %>% 
+  summarise(
+    mean_insight = mean(x, na.rm = TRUE),
+    sd = sd(x, na.rm = TRUE),
+    n = n(),
+    se = sd / sqrt(n),
+    lower_ci = mean_insight - qt(0.975, df = n - 1) * se,
+    upper_ci = mean_insight + qt(0.975, df = n - 1) * se
+  )
+
+p3 <- ggplot() +
+  geom_violin(data = d3b, aes(x = condition, y = x, fill = condition), alpha = 0) +
+  geom_jitter(data = d3b, aes(x = condition, y = x, color = condition), 
+              width = 0.15, alpha = 0.1, size = 5) +
+  geom_errorbar(data = d3b_summary, 
+                aes(x = condition, ymin = lower_ci, ymax = upper_ci, color = condition),
+                width = 0, linewidth = 2, alpha = 0.8) +
+  geom_line(data = d3b_summary, 
+            aes(x = as.numeric(factor(condition)), y = mean_insight, group = 1),
+            linewidth = 1.5, alpha = 0.8, color = "black") +
+  geom_point(data = d3b_summary, 
+             aes(x = condition, y = mean_insight, color = condition),
+             size = 4, shape = 21, fill = "white", alpha = 1) +
+  scale_color_manual(values = condition_colors) +
+  scale_fill_manual(values = condition_colors) +
+  labs(x = "", y = "Perceived Insight", title = "C. Third Party Ratings") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = 14, family = "Arial"),
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+
+# Combine all plots using patchwork - side by side
+combined_plot <- p1 + p2a + p2b + p3 + 
+  plot_layout(ncol = 4, widths = c(1, 1, 1, 1)) +
+  plot_annotation(
+    title = "",
+    theme = theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+    )
+  )
+```
+
+
+
+
+
+
+
+
+
+#STUDY 4
+
+##Study 4a
+
+###Study 4a: Load and clean data
+```{r}
+df_dirty <- read.csv("Study4a.csv") %>% 
+  filter(Finished == 1)
+
+#attention check
+df_dirty <- df_dirty %>%
+  filter(if_all(starts_with("x"), ~ .x == 4 | is.na(.x) | .x == ""))
+
+data_cleaned <- df_dirty %>%
+  dplyr::select(matches("^(v|p|i|u|a)\\.\\d_(s|m|b|f)"), id, z, FL_209_DO)
+
+data_long <- data_cleaned %>%
+  pivot_longer(cols = -c(id, z, FL_209_DO),
+               names_to = c("question", "type", "stimulus"),
+               names_pattern = "(v|p|i|u|a)\\.(\\d)_(.)",
+               values_to = "score") %>% 
+  filter(score != "")
+
+data_summary <- data_long %>%
+  filter(!is.na(score)) %>%
+  group_by(id, type, stimulus, z, FL_209_DO) %>%
+  summarize(mean = mean(as.numeric(score), na.rm = TRUE), .groups = 'drop')
+
+df <- data_summary %>%
+    mutate(stimulus = case_when(
+    stimulus == "s" ~ "vienna",
+    stimulus == "m" ~ "blockbuster",
+    stimulus == "b" ~ "bike",
+    stimulus == "f" ~ "merrick"
+  )) %>% 
+  mutate(temp = case_when(
+    type == "1" ~ "message",
+    type == "2" ~ "relevant",
+    type == "3" ~ "irrelevant"
+  )) %>% 
+  mutate(type = case_when(
+    type %in% c("2", "3") ~ "case",
+    type == "1" ~ "message"
+  )) %>% 
+    group_by(id) %>%
+  mutate(condition = case_when(
+    any(temp == "relevant") ~ "relevant",
+    any(temp == "irrelevant") ~ "irrelevant",
+    TRUE ~ "message"
+  )) %>%
+  ungroup() %>% 
+  dplyr::select(-temp)
+
+#Step 5: recode FL_209_DO variable
+d4a <- df %>% 
+  mutate(report = case_when(
+    FL_209_DO == "FL_130" ~ "message",
+    FL_209_DO == "FL_332" ~ "message",
+    FL_209_DO == "FL_178" ~ "relevant",
+    FL_209_DO == "FL_259" ~ "irrelevant",
+  ))
+```
+
+
+###Study 4a: Analyze
+```{r}
+# # # Preregistered # # #
+m <- lmer(mean ~ type*condition + (1|stimulus) + (1|id), d4a)
+summary(m)
+# effect size
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+# # # Exploratory # # #
+#paired
+#message v case relevant
+d.r <- d4a %>% 
+  filter(condition == "relevant")
+m <- lmer(mean ~ type + (1|stimulus) + (1|id), d.r)
+summary(m)
+# effect size
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+#message v case irrelevant
+d.i <- d4a %>% 
+  filter(condition == "irrelevant")
+m <- lmer(mean ~ type + (1|stimulus) + (1|id), d.i)
+summary(m)
+# effect size
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+#ergodicity
+d4h <- d4a %>% 
+  filter(condition == "relevant") %>% 
+  pivot_wider(names_from = "type", values_from = "mean") %>% 
+  mutate(difference = case - message) %>% 
+  mutate(above = ifelse(case > 6.431382, 1, 0))
+  
+ggplot(d4h, aes(x = difference, fill = factor(above))) +
+  geom_histogram(binwidth = 1.5, position = "dodge", alpha = 0.5) +
+  labs(x = "Case - Message Score", y = "Frequency", fill = "Above 1 SD") +
+  theme_minimal()
+
+# Get the IDs (or rows) to exclude
+high_case_ids <- d4h %>% filter(above == 1) %>% pull(id)
+
+# Filter them out from the long-format data
+d.r.below <- d4a %>% 
+  filter(condition == "relevant", !id %in% high_case_ids)
+
+m <- lmer(mean ~ type + (1 | stimulus) + (1 | id), data = d.r.below)
+summary(m)
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+
+#subjects with high insight ratings on the case
+#word count
+d4a_case <- d4a %>%
+  filter(type == "case") %>%
+  mutate(above = ifelse(id %in% high_case_ids, 1, 0),
+         word_length = nchar(as.character(z)))
+
+m <- lmer(word_length ~ above + (1 | stimulus), data = d4a_case)
+summary(m)
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+```
+
+
+#Study 4a: Visualize
+```{r}
+# set factor levels
+d4a$type <- factor(d4a$type, levels = c("message", "case"))
+d4a$condition <- factor(d4a$condition, levels = c("relevant", "irrelevant"))
+d4a$score <- d4a$mean
+
+# create plot
+ggplot(d4a, aes(x = type, y = mean, fill = type)) +
+  geom_violin(alpha = 0.15, color = "#D3D3D3") +
+  geom_point(position = position_jitter(width = 0.2, height = 0.1), 
+             size = 3.5, shape = 21, alpha = 0.1) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0, color = "#333333", linewidth = 1.5) +
+  stat_summary(fun = mean, geom = "line", aes(group = 1), color = "#333333", linewidth = 1.5, alpha = 0.7) +
+  stat_summary(fun = mean, geom = "point", size = 3, color = "#333333", shape = 21, fill = "white") +
+  facet_wrap(~condition) +
+  scale_fill_manual(values = c("message" = "#4C72B0", "case" = "#55A868")) +
+  labs(x = "", y = "Mean Insight Score", title = "")+
+  theme_minimal() +
+  theme(
+    legend.position = "none", 
+    text = element_text(size = 14, family = "Arial"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    strip.text = element_text(face = "bold")
+  )
+```
+
+##Study 4b
+
+###Study 4b: Clean
+```{r}
+df_dirty <- read.csv("Study4b.csv") %>% 
+  filter(Finished == 1)
+
+df_dirty <- df_dirty %>%
+  filter(if_all(matches("^...x"), ~ .x == 4 | is.na(.x) | .x == ""))
+
+data_cleaned <- df_dirty %>%
+  dplyr::select(id, matches("X\\d+_(x|v|p|i|u|a)\\.\\d+_(s|m|b|f)"))
+
+data_long <- data_cleaned %>%
+  pivot_longer(cols = -c(id),
+               names_to = c("case", "question", "type", "stimulus"),
+               names_pattern = "X(\\d+)_(v|p|i|u|a)\\.(\\d)_(.)",
+               values_to = "score") %>%
+  filter(score != "")
+
+data_summary <- data_long %>%
+  filter(!is.na(score)) %>%
+  group_by(id, case, type, stimulus) %>%
+  summarize(mean = mean(as.numeric(score), na.rm = TRUE), .groups = 'drop')
+
+d4b <- data_summary %>%
+    mutate(stimulus = case_when(
+    stimulus == "s" ~ "vienna",
+    stimulus == "m" ~ "blockbuster",
+    stimulus == "b" ~ "bike",
+    stimulus == "f" ~ "merrick"
+  )) %>%
+  mutate(temp = case_when(
+    type == "1" ~ "message",
+    type == "2" ~ "relevant",
+    type == "3" ~ "irrelevant"
+  )) %>%
+  mutate(temp2 = case_when(
+    type %in% c("2", "3") ~ "case",
+    type == "1" ~ "message"
+  )) %>% 
+   mutate(true_case = paste0(case, type, substr(stimulus, nchar(stimulus), nchar(stimulus)))) %>%
+  mutate(condition = case_when(
+    temp == "relevant" ~ "relevant",
+    temp == "irrelevant" ~ "irrelevant",
+    TRUE ~ "message"
+  )) %>%
+  dplyr::select(-type, -temp) %>% 
+  rename(type = temp2) %>%
+  filter(case != is.na(case))
+```
+
+
+###Study 4b: Analyze
+```{r}
+# # # # Preregistered # # # #
+m <- lmer(mean ~ type*condition + (1|id) + (1|stimulus), d4b)
+summary(m)
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+# post-hoc unpacking of effect
+m <- lmer(mean ~ condition + (1|id) + (1|stimulus), d4b %>% filter(condition != "message"))
+summary(m)
+m <- lmer(mean ~ condition + (1|id) + (1|stimulus), d4b %>% filter(condition != "relevant"))
+summary(m)
+m <- lmer(mean ~ condition + (1|id) + (1|stimulus), d4b %>% filter(condition != "irrelevant"))
+summary(m)
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+# # # # Exploratory # # # #
+m1 <- lmer(mean ~ type*condition + (1|stimulus) + (1|true_case) + (1|id), d4b)
+summary(m1)
+m2 <- lmer(mean ~ type*condition + (1|stimulus) + (1|true_case), d4b)
+summary(m2)
+m3 <- lmer(mean ~ type*condition + (1|stimulus) + (1|id), d4b)
+summary(m3)
+m4 <- lmer(mean ~ type*condition + (1|true_case) + (1|id), d4b)
+summary(m4)
+
+AIC(m1)
+AIC(m2)
+AIC(m3)
+AIC(m4)
+
+standardized_result <- standardize_parameters(m4)
+print(standardized_result)
+
+# post-hoc unpacking of effect
+
+m5 <- lmer(mean ~ condition + (1|id) + (1|true_case), d4b %>% filter(condition != "message"))
+summary(m5)
+standardized_result <- standardize_parameters(m5)
+print(standardized_result)
+m6 <- lmer(mean ~ condition + (1|id) + (1|true_case), d4b %>% filter(condition != "relevant"))
+summary(m6)
+m7 <- lmer(mean ~ condition + (1|id) + (1|true_case), d4b %>% filter(condition != "irrelevant"))
+summary(m7)
+standardized_result <- standardize_parameters(m7)
+print(standardized_result)
+
+#corrected p-values
+p <- c(0.00000017356, 0.411, 0.00000000647, 0.01009, 0.00334)
+p.adjust(p, method = "holm")
+```
+
+##Study 4c (posttest)
+
+###Study 4c: Clean
+```{r}
+df_dirty <- read.csv("Study4c.csv") %>% 
+  filter(Finished == 1)
+
+df_dirty <- df_dirty %>%
+  filter(if_all(matches("^...x"), ~ .x == 4 | is.na(.x) | .x == ""))
+
+data_cleaned <- df_dirty %>%
+  dplyr::select(id, matches("X\\d+_(x|v|p|i|u|a)\\.\\d+_(s|m|b|f)"))
+
+data_long <- data_cleaned %>%
+  pivot_longer(cols = -c(id),
+               names_to = c("case", "question", "type", "stimulus"),
+               names_pattern = "X(\\d+)_(v|p|i|u|a)\\.(\\d)_(.)",
+               values_to = "score") %>%
+  filter(score != "")
+
+data_summary <- data_long %>%
+  filter(!is.na(score)) %>%  
+  group_by(id, case, type, stimulus) %>%
+  summarize(mean = mean(as.numeric(score), na.rm = TRUE), .groups = 'drop')
+
+d4c <- data_summary %>%
+  mutate(stimulus = case_when(
+    stimulus == "s" ~ "vienna",
+    stimulus == "m" ~ "blockbuster",
+    stimulus == "b" ~ "bike",
+    stimulus == "f" ~ "merrick"
+  )) %>%
+  mutate(condition = case_when(
+    type == "2" ~ "SD",
+    type == "3" ~ "mean"
+  )) %>%
+  mutate(true_case = paste0(case, type, substr(stimulus, nchar(stimulus), nchar(stimulus)))) %>% 
+  dplyr::select(-case, -type) %>% 
+  filter(stimulus != is.na(stimulus))
+```
+
+
+###Study 4c: Analyze
+```{r}
+m <- lmer(mean ~ condition + (1|id) + (1|true_case) + (1|stimulus), d4c)
+summary(m)
+
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+```
+
+##Study 4d (posttest)
+
+###Study 4d: Clean
+```{r}
+df_dirty <- read.csv("Study4d.csv") %>% 
+  filter(Finished == 1)
+
+d4d <- df_dirty %>% 
+  dplyr::select(id, matches("^(irr|rel)"))
+
+d4d <- d4d %>% 
+  pivot_longer(cols = -id,
+               names_to = "names",
+               values_to = "scores") %>%
+  separate(names, into = c("condition", "question", "stimulus"), sep = "\\.")
+
+d4d <- d4d %>% 
+  filter(scores != "") %>% 
+  mutate(scores = as.numeric(scores)) %>% 
+  pivot_wider(names_from = question, values_from = scores)
+
+d4d <- d4d %>% 
+  group_by(id, condition, stimulus) %>% 
+  mutate(interest = ((int + share + surp + mem + eng) / 5))
+```
+
+###Study 4d: Analyze
+```{r}
+m <- lmer(interest ~ condition + (1|stimulus), d4d)
+summary(m)
+
+standardized_result <- standardize_parameters(m)
+print(standardized_result)
+
+# # # Scale Validity # # #
+items <- d4d[, c("int", "share", "surp", "mem", "eng")]
+alpha(items)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#STUDY 5
+
+##Study 5: Load and clean data
+```{r}
+df_dirty <- read.csv("Study5.csv") %>% 
+  filter(Finished == 1)
+
+df_dirty <- df_dirty %>%
+  filter(if_all(matches("^x"), ~ .x == 4 | is.na(.x) | .x == ""))
+
+data_cleaned <- df_dirty %>%
+  dplyr::select(id, matches("^(x|v|p|i|u|a|q1|q2)"), -Progress, -UserLanguage)
+
+data_cleaned <- data_cleaned %>% 
+  mutate(q1 = as.numeric(ifelse(is.na(q1) | q1 == "", 0, q1))) %>% 
+  mutate(q1.1 = as.numeric(ifelse(is.na(q1.1) | q1.1 == "", 0, q1.1))) %>% 
+  mutate(q1 = q1 + q1.1) %>% 
+  dplyr::select(-q1.1)
+
+data_long <- data_cleaned %>%
+  pivot_longer(cols = -c(id, q1, q2),
+               names_to = c("question", "condition"),
+               names_pattern = "(v|p|i|u|a)\\.(\\d+)",
+               values_to = "score") %>%
+  filter(score != "") %>% 
+  filter(condition != is.na(condition))
+
+data_summary <- data_long %>%
+  group_by(id, condition, q1, q2) %>%
+  summarize(mean = mean(as.numeric(score), na.rm = TRUE), .groups = 'drop')
+
+d5 <- data_summary %>%
+  mutate(condition = case_when(
+    condition == "1" ~ "message.opening_unsatisfying.solution",
+    condition == "2" ~ "message.opening_satisfying.solution",
+    condition == "3" ~ "case.opening_unsatisfying.solution",
+    condition == "4" ~ "case.opening_satisfying.solution"
+  )) %>% 
+  separate(condition, into = c("problem", "solution"), sep = "_", remove = FALSE) %>% 
+  mutate(q1 = as.numeric(q1)) %>% 
+  mutate(q2 = as.numeric(q2))
+```
+
+##Study 5: Analysis
+```{r}
+# # # Pre-registered # # #
+# are satisfying-solutions more curiosity-satisfying? (manipulation check)
+m <- Anova(lm(q2 ~ solution, data = d5), type = 2)
+m
+#effect size
+effect_sizes <- eta_squared(m, partial = TRUE)
+effect_sizes
+
+# are case-openings more curiosity-provoking?
+m <- Anova(lm(q1 ~ problem, data = d5), type = 2)
+m
+#effect size
+effect_sizes <- eta_squared(m, partial = TRUE)
+effect_sizes
+
+# case-message X satisfying-solution
+m <- Anova(lm(mean ~ problem * solution, data = d5), type = 3)
+m
+#effect size
+effect_sizes <- eta_squared(m, partial = TRUE)
+effect_sizes
+# interaction is not significant -> type 2
+m <- Anova(lm(mean ~ problem * solution, data = d5), type = 2)
+m
+#effect size
+effect_sizes <- eta_squared(m, partial = TRUE)
+effect_sizes
+
+
+
+
+
+# # # exploratory # # #
+#holm correction
+p <- c(0.936, 0.00000542, 0.152, 0.0118, 0.000000000236)
+p.adjust(p, method = "holm")
+
+summary(lm(mean ~ q1, data = d5))
+```
+
+##Study 5: Visualize
+
+```{r}
+#set order
+d5 <- d5 %>% 
+  mutate(solution = case_when(solution == "unsatisfying.solution" ~ "unsatisfying resolution",
+                            solution == "satisfying.solution" ~ "satisfying resolution"),
+         problem = case_when(problem == "message.opening" ~ "message opening",
+                            problem == "case.opening" ~ "case opening"),
+          problem = factor(problem, levels = c("message opening", "case opening")))
+
+ggplot(d5, aes(x = solution, y = mean, fill = problem)) +
+  geom_violin(alpha = 0.2, color = "#D3D3D3") +
+  geom_point(position = position_jitter(width = 0.2, height = 0.1), 
+             size = 3.5, shape = 21, alpha = 0.15) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar", width = 0, color = "#333333", linewidth = 1.5) +
+    stat_summary(fun = mean, geom = "line", aes(group = 1), color = "#333333", linewidth = 2, alpha = 0.7) +
+  stat_summary(fun = mean, geom = "point", size = 3, color = "#333333", shape = 21, fill = "white") +
+
+  facet_wrap(~problem) +
+  scale_fill_manual(values = c("message opening" = "#4C72B0", "case opening" = "#55A868")) +
+  labs(x = "", y = "Mean Insight Score", title = "") +
+  theme_minimal() +
+  theme(
+    legend.position = "none", 
+    text = element_text(size = 14, family = "Arial"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10)),
+    strip.text = element_text(face = "bold")
+  )
+```
+
+
+
+
+
+
+
+#STUDY 6
+
+##Study 6: Load and clean data
+
+```{r}
+d6 <- read.csv("Study6.csv") %>% 
+  slice(-c(1:2)) %>% 
+  # attention
+  mutate(across(starts_with("x"), ~ as.numeric(.x))) %>% 
+  filter(if_all(starts_with("x"), ~ .x == 4 | is.na(.x))) %>% 
+  # 2. useful = mean of columns starting with v, p, i, u, a
+  mutate(across(starts_with(c("v.", "p.", "i.", "u.", "a.")), as.numeric)) %>%
+  mutate(useful = rowMeans(across(starts_with(c("v.", "p.", "i.", "u.", "a."))),
+                           na.rm = TRUE)) %>%
+  
+  # 3. generalizable = mean of columns starting with d, s, g
+  mutate(across(starts_with(c("d.", "s.", "g.")), as.numeric)) %>%
+  mutate(generalizable = rowMeans(across(starts_with(c("d.", "s.", "g."))),
+                                  na.rm = TRUE)) %>% 
+  
+  filter(useful != is.na(useful)) %>% 
+  mutate(condition = FL_441_DO) %>% 
+  dplyr::select(id, condition, useful, generalizable)
+```
+
+##Study 6: Analysis
+
+```{r}
+# useful
+m <- lm(useful~condition, d6)
+anova_type2 <- Anova(m, type = 2)
+anova_type2
+effect_sizes <- eta_squared(m)
+effect_sizes
+emm<- emmeans(m, pairwise ~ condition, adjust = "holm")
+emm
+eff <- eff_size(emm, sigma = sigma(m), edf = df.residual(m), method = "d")
+eff
+
+# generalizable
+m <- lm(generalizable~condition, d6)
+anova_type2 <- Anova(m, type = 2)
+anova_type2
+effect_sizes <- eta_squared(m)
+effect_sizes
+emm<- emmeans(m, pairwise ~ condition, adjust = "holm")
+emm
+eff <- eff_size(emm, sigma = sigma(m), edf = df.residual(m), method = "d")
+eff
+```
+
+##Study 6: Visualize
+
+```{r}
+# rename + order
+d6 <- d6 %>%
+  mutate(condition = dplyr::recode(condition,
+      "Velcrogeneral"    = "General",
+      "Velcroparticular" = "Particular",
+      "Velcromessage"    = "Message"),
+    condition = factor(condition, levels = c("General", "Particular", "Message")))
+
+velcro_cols <- c("General" = "#55A868", "Particular" = "#DD8452",  "Message" = "#4C72B0")
+
+
+useful <- ggplot(d6, aes(x = condition, y = useful, fill = condition)) +
+  geom_violin(alpha = 0.20, color = "#D3D3D3") +
+  geom_point(
+    position = position_jitter(width = 0.2, height = 0.1),
+    size = 3.5, shape = 21, alpha = 0.15
+  ) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar",
+               width = 0, color = "#333333", linewidth = 1.5) +
+  stat_summary(fun = mean, geom = "point",
+               size = 3, color = "#333333", shape = 21, fill = "white") +
+  scale_fill_manual(values = velcro_cols) +
+  labs(x = "", y = "Mean Insight Score", title = "") +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = 14, family = "Arial"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+
+generalizable <- ggplot(d6, aes(x = condition, y = useful, fill = condition)) +
+  geom_violin(alpha = 0.20, color = "#D3D3D3") +
+  geom_point(
+    position = position_jitter(width = 0.2, height = 0.1),
+    size = 3.5, shape = 21, alpha = 0.15
+  ) +
+  stat_summary(fun.data = mean_cl_normal, geom = "errorbar",
+               width = 0, color = "#333333", linewidth = 1.5) +
+  stat_summary(fun = mean, geom = "point",
+               size = 3, color = "#333333", shape = 21, fill = "white") +
+  scale_fill_manual(values = velcro_cols) +
+  labs(x = "", y = "Mean Generalizablility Score", title = "") +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    text = element_text(size = 14, family = "Arial"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    axis.title.y = element_text(margin = margin(r = 10))
+  )
+
+useful / generalizable
+```
+
+
+# General Discussion
+
+```{r}
+# unite study 1 a and b
+d1 <- d1a %>% 
+  filter(time == 1) %>% 
+  dplyr::select(condition, x) %>%
+  mutate(study = 1) %>% 
+  rbind(d1b %>%
+          dplyr::select(condition, x) %>% 
+          mutate(study = 2))
+
+m <- lm(x ~ study, d1 %>% 
+            filter((condition == "case" & study == 1) |
+                     (condition == "message" & study == 2)))
+summary(m)
+
+# unite study 2 a and b
+d2 <- d2a %>% 
+  dplyr::select(stimulus_set, condition, x) %>%
+  mutate(study = 1) %>% 
+  rbind(d2b %>%
+          dplyr::select(stimulus_set, condition, x) %>% 
+          mutate(study = 2))
+
+m <- lmer(x ~ study + (1|stimulus_set), d2 %>% filter(!(condition == "message" & study == 1)))
+summary(m)
+m <- lmer(x ~ study + (1|stimulus_set), d2 %>% 
+            filter((condition == "case" & study == 1) |
+                     (condition == "message" & study == 2)))
+summary(m)
+
+# unite study 4 a and b
+d4 <- d4a %>% 
+  dplyr::select(stimulus, condition, mean, report) %>%
+  mutate(study = 1) %>% 
+  rbind(d4b %>%
+          mutate(report = 1) %>% 
+          dplyr::select(stimulus, condition, mean, report) %>% 
+          mutate(study = 2))
+
+m <- lmer(mean ~ study + (1|stimulus), d4 %>% 
+            filter((condition == "relevant" & study == 1) |
+                     (condition == "message" & study == 2)))
+summary(m)
+m <- lmer(mean ~ study + (1|stimulus), d4 %>% 
+            filter(report == "message" | report == 1))
+summary(m)
+```
+
+
+#Appendix
+##For Study 1b: Randomly select participant responses
+```{r}
+#dataset with reported
+d.p <- read.csv("Study1a.csv") %>% 
+  filter(Finished == 1)
+
+d.q <- d.p %>%
+  pivot_longer(cols = starts_with(c("a.", "i.", "u.", "p.", "v.")),
+               names_to = c(".value", "category"),
+               names_sep = "\\.",
+               values_drop_na = TRUE) %>% 
+  dplyr::select(id, category, a, q) %>% 
+  mutate(category = dplyr::recode(category,
+                           "g1" = "general 1",
+                           "g2" = "general 2",
+                           "n1" = "narrative 1",
+                           "n2" = "narrative 2")) %>% 
+  separate(col = category, into = c("condition", "time"), sep = " ") %>%
+  mutate(condition = as.factor(condition), time = as.factor(time)) %>% 
+  filter(time == 1)
+
+#case reports csv
+d.case <- d.q %>% 
+  filter(condition == "narrative") 
+case.reports <- data.frame(sample(d.case$q, 10))
+write.csv(case.reports, file = "case.reports.csv", row.names = F)
+
+#message reports csv
+d.message <- d.q %>% 
+  filter(condition == "general")
+message.reports <- data.frame(sample(d.message$q, 10))
+write.csv(message.reports, file = "message.reports.csv", row.names = F)
+```
+
+##For Study 2b: Randomly select participant responses
+```{r}
+d.p <- read.csv("Study2a.csv") %>% 
+  filter(Finished == 1)
+
+#dataset with reported
+d.z <- d.p %>%
+  filter(att_t == "4" | is.na(att_t)) %>% 
+  filter(att_s == "4" | is.na(att_s)) %>% 
+  pivot_longer(cols = starts_with(c("a.", "i.", "u.", "p.", "v.")),
+               names_to = c(".value", "item"),
+               names_sep = "\\_", 
+               values_drop_na = TRUE) %>% 
+  pivot_longer(cols = starts_with(c("a.", "i.", "u.", "p.", "v.")),
+               names_to = c(".value", "condition"),
+               names_sep = "\\.",
+               values_drop_na = TRUE) %>% 
+  dplyr::select(id, item, condition, a, z) %>% 
+  mutate(condition = dplyr::recode(condition,
+                           "c1" = "case",
+                           "m1" = "message")) %>% 
+  mutate(condition = as.factor(condition)) %>%
+  mutate(item = dplyr::recode(item,
+                            "s" = "Semmelweis",
+                            "t" = "Dominos"))
+
+#case-Semmelweis reports csv
+d.cv <- d.z %>% 
+  filter(condition == "case", item == "Semmelweis") 
+cv.reports <- data.frame(sample(d.cv$z, 10))
+write.csv(cv.reports, file = "cv.reports.csv", row.names = F)
+
+#case-Dominos reports csv
+d.cd <- d.z %>% 
+  filter(condition == "case", item == "Dominos") 
+cd.reports <- data.frame(sample(d.cd$z, 10))
+write.csv(cd.reports, file = "cd.reports.csv", row.names = F)
+
+#message-Semmelweis reports csv
+d.mv <- d.z %>% 
+  filter(condition == "message", item == "Semmelweis") 
+mv.reports <- data.frame(sample(d.mv$z, 10))
+write.csv(mv.reports, file = "mv.reports.csv", row.names = F)
+
+#message-Semmelweis reports csv
+d.md <- d.z %>% 
+  filter(condition == "message", item == "Semmelweis") 
+md.reports <- data.frame(sample(d.md$z, 10))
+write.csv(md.reports, file = "md.reports.csv", row.names = F)
+```
+
+##For Study 3b: Randomly select participant responses
+```{r}
+#clean study 3 post dataset
+d.p <- read.csv("Study3post.csv")
+d3post <- d.p %>%
+  slice(-c(1:6)) %>% 
+  mutate(across(c(Q1, Q2, Q3, Q4, Q5, Q6, a, i, u, p, v), as.numeric)) %>% 
+  mutate(post_test_score = (Q1 + Q2 + Q3 + Q4 + Q5 + Q6) / 6) %>% 
+  mutate(x = (a+i+u+p+v)/5) %>% 
+  dplyr::select(name, post_test_score, x, learn) %>% 
+  group_by(name) %>%
+  filter(n() == 1) %>%
+  ungroup()
+
+#now we compute the mean
+s3_mean <- mean(d3post$x)
+s3_sd <- sd(d3post$x)
+
+#then we break into the 1SD + and mean +/- 0.5 SD group
+d3_insightful <- d3post %>% 
+  filter(x > (s3_mean + s3_sd))
+
+d3_uninsightful <- d3post %>% 
+  filter(x < (s3_mean + s3_sd/2) & x > (s3_mean - s3_sd/2))
+
+#offer arguments to for loop
+datasets <- list(d3_insightful = d3_insightful, 
+                 d3_uninsightful = d3_uninsightful)
+output_files <- c("d3_sampled_insightful.csv", "d3_sampled_uninsightful.csv")
+
+#sample 10
+ten_sample_csv <- function(data, output_file) {
+  sampled_data <- sample_n(data, 10)
+  write.csv(sampled_data, output_file, row.names = FALSE)
+  return(sampled_data)
+}
+
+#perform for loop
+for (i in seq_along(datasets)) {
+  ten_sample_csv(datasets[[i]], output_files[i])
+}
+```
+
+
+##For Study 4b: Randomly select participant responses
+```{r}
+#create dataframes from which to sample
+df_messages <- d4a %>% 
+  filter(report == "message",
+         type == "case")
+df_relevant <- d4a %>% 
+  filter(report == "relevant",
+         type == "case")
+df_irrelevant <- d4a %>% 
+  filter(report == "irrelevant",
+         type == "case")
+
+#offer arguments to for loop
+datasets <- list(df_messages = df_messages, 
+                 df_relevant = df_relevant, 
+                 df_irrelevant = df_irrelevant)
+output_files <- c("sampled_messages.csv", "sampled_relevant.csv", "sampled_irrelevant.csv")
+
+#function that pulls precisely 12 reports
+even_sample_csv <- function(data, output_file) {
+  # For each level in 'stimulus', sample 2.5% of the rows
+  sampled_data <- data %>%
+    group_by(stimulus) %>%
+    sample_frac(0.1 / n_distinct(stimulus)) %>%
+    ungroup()
+  write.csv(sampled_data, output_file, row.names = FALSE)
+  return(sampled_data)
+}
+
+#perform for loop
+for (i in seq_along(datasets)) {
+  even_sample_csv(datasets[[i]], output_files[i])
+}
+```
+
+##For Study 4c: Randomly select participant responses
+```{r}
+#first we obtain means
+df_relevant <- d4a %>% 
+  filter(report == "relevant",
+         type == "case")
+df_means <- df_relevant %>% 
+  group_by(type, condition) %>% 
+  summarize(mean_mean = mean(mean), sd = sd(mean)) %>% 
+  ungroup()
+
+#then we break into the 1SD + and mean +/- 0.5 SD group
+df_insightful <- df_relevant %>% 
+  filter(mean >= 6.431382)
+
+df_uninsightful <- df_relevant %>% 
+  filter(mean < 5.706726 & mean > 4.257413)
+
+#offer arguments to for loop
+datasets <- list(df_insightful = df_insightful, 
+                 df_uninsightful = df_uninsightful)
+output_files <- c("sampled_insightful.csv", "sampled_uninsightful.csv")
+
+#designed to pull precisely 12 reports
+even_sample_csv <- function(data, output_file) {
+  sampled_data <- data %>%
+    group_by(stimulus) %>%
+    sample_n(3) %>% 
+    ungroup()
+  write.csv(sampled_data, output_file, row.names = FALSE)
+  return(sampled_data)
+}
+
+#perform for loop
+for (i in seq_along(datasets)) {
+  even_sample_csv(datasets[[i]], output_files[i])
+}
+```
+
+##For all studies -- demographic data
+```{r}
+#Study 1a
+d1ad <- read.csv("Study1a_demo.csv")
+
+mean(d1ad$Age)
+sd(d1ad$Age)
+table(d1ad$Sex)
+table(d1ad$Ethnicity.simplified)
+
+#Study 1b
+d1bd <- read.csv("Study1b_demo.csv")
+
+mean(d1bd$Age)
+sd(d1bd$Age)
+table(d1bd$Sex)
+table(d1bd$Ethnicity.simplified)
+
+#Study 2a
+d2ad <- read.csv("Study2a_demo.csv")
+
+mean(d2ad$Age)
+sd(d2ad$Age)
+table(d2ad$Sex)
+table(d2ad$Ethnicity.simplified)
+
+#Study 2b
+d2bd <- read.csv("Study2b_demo.csv")
+
+mean(d2bd$Age)
+sd(d2bd$Age)
+table(d2bd$Sex)
+table(d2bd$Ethnicity.simplified)
+
+#Study 3b
+d3bd <- read.csv("Study3b_demo.csv")
+
+mean(d3bd$Age)
+sd(d3bd$Age)
+table(d3bd$Sex)
+table(d3bd$Ethnicity.simplified)
+
+#Study 4a
+d4ad <- read.csv("Study4a_demo.csv")
+
+mean(d4ad$Age)
+sd(d4ad$Age)
+table(d4ad$Sex)
+table(d4ad$Ethnicity.simplified)
+
+#Study 4b
+d4bd <- read.csv("Study4b_demo.csv")
+
+mean(d4bd$Age)
+sd(d4bd$Age)
+table(d4bd$Sex)
+table(d4bd$Ethnicity.simplified)
+
+#Study 4 post-test 1
+d4cd <- read.csv("Study4c_demo.csv")
+
+mean(d4cd$Age)
+sd(d4cd$Age)
+table(d4cd$Sex)
+table(d4cd$Ethnicity.simplified)
+
+#Study 4 post-test 2
+d4dd <- read.csv("Study4d_demo.csv")
+
+mean(d4dd$Age)
+sd(d4dd$Age)
+table(d4dd$Sex)
+table(d4dd$Ethnicity.simplified)
+
+#Study 5
+d5d <- read.csv("Study5_demo.csv")
+
+mean(d5d$Age)
+sd(d5d$Age)
+table(d5d$Sex)
+table(d5d$Ethnicity.simplified)
+
+d6d <- read.csv("Study6a_demo.csv")
+
+mean(d6d$Age)
+sd(d6d$Age)
+table(d6d$Sex)
+table(d6d$Ethnicity.simplified)
+```
+

@@ -1,0 +1,401 @@
+Primary language,Age,Sex,Ethnicity simplified,Country of birth,Country of residence,Nationality,Language,Student status,Employment status
+English,22,Male,Black,United States,United States,United States,English,No,Part-Time
+English,33,Male,White,United States,United States,United States,English,No,Part-Time
+English,66,Male,Mixed,United States,United States,United States,English,No,Part-Time
+English,55,Female,White,United Kingdom,United Kingdom,Russian Federation,Russian,No,Part-Time
+English,51,Female,Black,United States,United States,United States,English,DATA_EXPIRED,Full-Time
+English,64,Female,Black,United States,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+English,37,Female,White,United States,United States,United States,English,No,Part-Time
+English,54,Female,White,United States,United States,United States,English,No,Part-Time
+English,66,Male,White,Ireland,United Kingdom,Ireland,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,68,Female,White,United States,United States,United States,English,No,Part-Time
+English,29,Male,White,Canada,Canada,Canada,English,No,Unemployed (and job seeking)
+English,30,Male,White,Morocco,Morocco,Morocco,English,No,Unemployed (and job seeking)
+"Spanish, Galician, English",28,Male,White,Spain,Spain,Spain,Galician,Yes,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+"Arabic, English",29,Male,Other,Morocco,Morocco,Morocco,English,No,Full-Time
+English,28,Male,Black,United States,United States,United States,English,No,Full-Time
+English,44,Male,White,Greece,Greece,United States,English,No,Full-Time
+"Spanish, English",29,Male,Mixed,Chile,Chile,Chile,English,Yes,Unemployed (and job seeking)
+English,68,Female,White,United States,United States,United States,English,Yes,Full-Time
+"English, Hungarian",32,Male,White,Hungary,Hungary,Hungary,English,No,Full-Time
+English,49,Male,Black,Nigeria,United Kingdom,United Kingdom,English,No,DATA_EXPIRED
+"English, Spanish",38,Male,White,United States,United States,United States,English,No,Full-Time
+English,34,Male,White,United States,United States,United States,English,No,Full-Time
+"Slovenian, English",22,Male,White,Slovenia,Slovenia,Slovenia,Slovenian,Yes,Part-Time
+"Polish, English",38,Male,White,Poland,Poland,Poland,Polish,No,Full-Time
+"Italian, English",32,Male,White,Italy,Italy,Italy,Italian,No,DATA_EXPIRED
+English,44,Male,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Full-Time
+English,34,Male,Black,United States,United States,United States,English,No,Full-Time
+English,31,Male,White,United States,United States,United States,English,Yes,Full-Time
+English,22,Male,Asian,United States,United States,United States,English,Yes,Unemployed (and job seeking)
+English,38,Male,Mixed,United States,United States,United States,English,No,Part-Time
+English,26,Male,Black,Nigeria,United Kingdom,United Kingdom,English,No,Part-Time
+English,47,Male,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,25,Male,Asian,India,South Africa,India,English,No,Unemployed (and job seeking)
+"English, Hindi, Urdu",25,Male,Asian,India,India,India,English,Yes,Part-Time
+English,32,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,35,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,54,Male,White,United States,United States,United States,English,No,Part-Time
+English,32,Male,Black,Nigeria,United Kingdom,United Kingdom,English,No,Full-Time
+English,39,Male,White,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,29,Male,White,Canada,Canada,Canada,English,No,Part-Time
+English,25,Male,Other,United Kingdom,United Kingdom,United Kingdom,English,Yes,Full-Time
+English,27,Male,Black,United States,United States,United States,English,No,Part-Time
+English,20,Male,Asian,United States,United States,Vietnam,English,No,Part-Time
+"Greek, English",35,Male,White,Greece,Greece,Greece,Greek,No,Part-Time
+English,41,Female,White,United States,United States,United States,English,No,Full-Time
+"English, Portuguese",37,Male,White,Portugal,Portugal,Portugal,Portuguese,No,Full-Time
+English,41,Male,Black,United States,United States,United States,English,No,Part-Time
+English,56,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,35,Male,Black,United States,United States,United States,English,Yes,Part-Time
+English,39,Female,White,United States,United States,United States,English,Yes,Full-Time
+"Hebrew, English",40,Male,White,Israel,Israel,Israel,English,No,Full-Time
+English,33,Male,White,United States,United States,United States,English,No,Full-Time
+"Polish, English",28,Male,White,Poland,Poland,Poland,Polish,No,Full-Time
+"English, Hungarian",21,Male,White,Hungary,Hungary,Hungary,Hungarian,DATA_EXPIRED,Part-Time
+English,34,Female,Black,United States,United States,United States,English,No,Full-Time
+English,47,Male,Asian,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,23,Male,Black,South Africa,South Africa,South Africa,English,Yes,Unemployed (and job seeking)
+English,24,Female,Black,United States,United States,United States,English,No,Full-Time
+English,60,Male,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Full-Time
+English,32,Male,Mixed,South Africa,South Africa,South Africa,English,Yes,Full-Time
+"English, Cantonese, Mandarin",25,Male,Asian,Macao,United Kingdom,Portugal,Cantonese,Yes,Full-Time
+English,25,Male,Asian,United Kingdom,United Kingdom,United Kingdom,English,Yes,Other
+English,45,Male,White,United States,United States,United States,English,No,Full-Time
+English,23,Female,Black,United States,United States,United States,English,Yes,Full-Time
+English,25,Male,Black,Kenya,Kenya,Kenya,English,No,Unemployed (and job seeking)
+"English, Italian, Spanish",28,Male,Mixed,United States,Italy,Italy,Italian,Yes,Part-Time
+English,27,Male,Black,Ghana,United Kingdom,Ghana,English,DATA_EXPIRED,DATA_EXPIRED
+English,58,Male,Mixed,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,70,Male,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,32,Male,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+English,40,Male,Black,United States,United States,United States,English,No,Full-Time
+"English, Slovak",35,Male,White,Slovakia,Slovakia,Slovakia,Slovak,No,Full-Time
+English,31,Male,White,United States,United States,United States,English,No,Part-Time
+"English, Russian, Hebrew",48,Male,White,Kazakhstan,Israel,Israel,English,No,Full-Time
+English,33,Male,Asian,China,Canada,Canada,Chinese,Yes,Full-Time
+English,21,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+"Spanish, English, Portuguese",34,Male,Black,United States,United States,United States,English,No,Part-Time
+English,55,Male,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,33,Male,White,United States,United States,United States,English,No,Full-Time
+English,52,Male,White,United States,United States,United States,English,No,Due to start a new job within the next month
+English,53,Male,White,Ireland,Ireland,Ireland,English,No,Full-Time
+"English, Greek, German, French",27,Male,White,Greece,Greece,Greece,Greek,No,Full-Time
+English,32,Male,White,United States,United States,United States,English,No,Part-Time
+English,43,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,38,Male,White,United States,United States,United States,English,No,Full-Time
+"English, Other",24,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+"Arabic, English, Korean",19,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,50,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,36,Male,Black,Germany,United Kingdom,Canada,English,Yes,Full-Time
+"Italian, English",45,Male,White,Italy,Italy,Italy,Italian,No,Full-Time
+English,29,Male,White,United States,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+"Polish, English",30,Male,White,Poland,Poland,Poland,Polish,No,Full-Time
+"English, German",37,Male,White,United Kingdom,United Kingdom,Germany,English,No,Other
+English,35,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,66,Male,White,United States,United States,United States,English,No,Full-Time
+English,47,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,51,Male,Black,United States,United States,United States,English,No,Full-Time
+English,35,Female,White,United States,United States,United States,English,Yes,Unemployed (and job seeking)
+English,47,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,42,Male,White,Spain,United Kingdom,United Kingdom,English,Yes,Full-Time
+English,65,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"English, Other",44,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,54,Male,Mixed,United States,United States,United States,English,No,Full-Time
+English,55,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"English, Dutch",20,Male,Mixed,United Kingdom,Netherlands,Netherlands,English,Yes,Other
+English,51,Female,White,United States,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+"Arabic, English, French, Afrikaans",36,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,23,Male,Black,United States,United States,United States,English,No,Full-Time
+English,24,Male,White,United States,United States,United States,English,No,Part-Time
+"Hungarian, German, English",33,Male,White,Hungary,Hungary,Hungary,Hungarian,No,Full-Time
+"Afrikaans, English, Finnish, French, German",44,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,20,Male,White,United States,United States,United States,English,No,Part-Time
+English,25,Male,White,United States,United States,United States,English,No,Part-Time
+English,51,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Unemployed (and job seeking)
+English,39,Male,White,United States,United States,United States,English,No,Full-Time
+"Arabic, Dutch, English, Hebrew, German",22,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+"Hindi, English",26,Male,Asian,India,India,India,English,DATA_EXPIRED,DATA_EXPIRED
+English,37,Male,White,United States,United States,United States,English,No,Full-Time
+English,32,Male,Black,Nigeria,United Kingdom,Nigeria,English,Yes,Full-Time
+"Portuguese, English",23,Male,White,United Kingdom,Portugal,Portugal,Portuguese,Yes,Part-Time
+English,37,Male,White,United States,United States,United States,English,No,Full-Time
+"English, Lithuanian",30,Female,White,Lithuania,United Kingdom,Lithuania,Lithuanian,No,Part-Time
+"Greek, English",34,Male,White,Greece,Greece,Greece,Greek,No,Full-Time
+"Portuguese, English",23,Male,White,Portugal,Portugal,Portugal,Portuguese,Yes,Full-Time
+English,75,Male,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,25,Male,Black,South Africa,South Africa,South Africa,English,Yes,Unemployed (and job seeking)
+English,39,Male,White,United States,Portugal,Portugal,Portuguese,No,Full-Time
+English,63,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"English, Afrikaans",25,Male,Black,South Africa,South Africa,South Africa,English,Yes,Part-Time
+"English, Chinese, Mandarin, German",40,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,38,Male,White,Canada,Canada,Canada,English,No,Full-Time
+"English, Turkish",25,Male,White,Turkey,DATA_EXPIRED,Turkey,English,Yes,Part-Time
+English,24,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,30,Female,White,United States,United States,United States,English,No,Full-Time
+English,63,Male,White,United States,United States,United States,English,No,Full-Time
+English,61,Male,White,Ireland,Ireland,Ireland,English,No,Full-Time
+"Afrikaans, Arabic, English",55,Male,Asian,South Africa,South Africa,South Africa,English,No,Full-Time
+English,42,Female,Mixed,Nicaragua,United States,United States,Spanish,No,Unemployed (and job seeking)
+English,45,Male,White,United States,United States,United States,English,No,Full-Time
+English,41,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"Laotian, Slovak, Slovenian, English",51,Male,White,Spain,United Kingdom,United Kingdom,English,No,Full-Time
+"English, Hindi, Malayalam",44,Male,Asian,India,Canada,India,English,No,Full-Time
+"English, Greek",27,Male,White,Greece,Greece,Greece,Other,Yes,Other
+English,31,Male,Black,Nigeria,United Kingdom,Nigeria,English,Yes,Part-Time
+English,29,Male,Asian,Pakistan,United States,United States,Urdu,No,Full-Time
+English,21,Male,Black,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,41,Male,Black,Nigeria,Poland,Nigeria,English,Yes,Full-Time
+English,61,Male,Mixed,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"English, Malayalam",30,Male,Asian,India,Canada,India,Malayalam,No,Full-Time
+"Hungarian, English",27,Male,White,Hungary,Hungary,Hungary,Hungarian,No,DATA_EXPIRED
+English,26,Male,White,United States,United States,United States,English,No,Full-Time
+English,32,Male,Asian,Korea,Canada,Canada,English,No,Other
+English,57,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,35,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,52,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,24,Male,Black,United States,United States,United States,English,Yes,Full-Time
+English,53,Female,White,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,29,Male,Black,United Kingdom,United States,United States,English,No,Full-Time
+English,29,Male,Black,South Africa,South Africa,South Africa,English,Yes,Due to start a new job within the next month
+English,39,Male,Other,United States,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+English,53,Male,White,United States,United States,United States,English,DATA_EXPIRED,Full-Time
+English,23,Male,Black,South Africa,South Africa,South Africa,English,DATA_EXPIRED,DATA_EXPIRED
+English,31,Male,Other,United Kingdom,Canada,Canada,English,No,Full-Time
+English,37,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,62,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,36,Male,Black,Nigeria,United Kingdom,Nigeria,English,Yes,Part-Time
+English,57,Male,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Full-Time
+English,50,Male,Black,United States,United States,United States,English,No,Full-Time
+"Spanish, English",24,Male,White,Spain,Spain,Spain,Spanish,Yes,Part-Time
+English,70,Male,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,30,Male,Black,Nigeria,United Kingdom,Nigeria,English,Yes,Full-Time
+English,29,Male,White,United States,United States,United States,English,No,Full-Time
+English,68,Male,White,Canada,Canada,Canada,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,55,Male,White,United States,United States,United States,English,No,Full-Time
+English,35,Male,Asian,Canada,Canada,Canada,English,Yes,Due to start a new job within the next month
+English,51,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,46,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,33,Male,White,United States,United States,United States,English,Yes,Full-Time
+English,25,Male,Black,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,22,Male,Black,South Africa,South Africa,South Africa,English,Yes,Part-Time
+English,28,Male,Black,United States,United States,United States,English,No,Part-Time
+English,30,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,36,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,35,Male,White,United States,United States,United States,English,No,Full-Time
+English,49,Male,White,United States,United States,United States,English,No,Full-Time
+English,33,Male,Black,South Africa,South Africa,South Africa,English,Yes,Due to start a new job within the next month
+English,45,Male,White,United States,United States,United States,English,No,Part-Time
+English,31,Male,Black,United States,United States,United States,English,No,Full-Time
+"Portuguese, English",37,Male,White,Portugal,Portugal,Portugal,Portuguese,No,Full-Time
+"English, Polish",23,Male,White,Poland,Poland,Poland,English,Yes,Full-Time
+"Polish, English",22,Male,White,Poland,Poland,Poland,Polish,Yes,Part-Time
+English,49,Male,White,United States,United States,United States,English,No,Full-Time
+English,53,Male,White,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,26,Female,Asian,United States,United States,United States,English,No,Full-Time
+"French, English",31,Male,White,France,France,France,French,No,Full-Time
+English,48,Female,Other,United States,United States,United States,English,Yes,Full-Time
+English,26,Male,White,Canada,Canada,Canada,English,No,Part-Time
+"English, French, German, Swahili, Spanish",40,Male,Black,Kenya,Kenya,Kenya,English,No,Full-Time
+English,63,Female,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+English,25,Male,Asian,Canada,Canada,Canada,Cantonese,DATA_EXPIRED,DATA_EXPIRED
+English,35,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,51,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+"Portuguese, English",29,Male,White,Portugal,Portugal,Portugal,Portuguese,No,Full-Time
+English,64,Male,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,50,Male,White,United States,United States,United States,English,No,Part-Time
+English,37,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,42,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,29,Female,Mixed,Canada,Canada,Canada,English,No,Full-Time
+"English, French",20,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,20,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+"Cantonese, English",31,Female,Black,United States,United States,United States,English,No,Full-Time
+English,30,Female,Black,United States,United States,United States,English,No,Full-Time
+English,32,Female,Black,Zimbabwe,South Africa,Zimbabwe,English,No,Full-Time
+"Greek, English",54,Male,White,Germany,Greece,Greece,Greek,No,Part-Time
+"Spanish, English",28,Male,Other,Mexico,Mexico,Mexico,Spanish,Yes,Unemployed (and job seeking)
+English,45,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,28,Female,Asian,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,51,Female,White,United States,United States,Italy,English,No,Full-Time
+"Dutch, English, German, Hebrew",25,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,47,Female,White,United States,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+English,63,Male,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+"Latvian, English",23,Female,White,Latvia,Latvia,Latvia,Latvian,No,Part-Time
+"Afrikaans, English",28,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,44,Female,White,United States,United States,United States,English,DATA_EXPIRED,Part-Time
+English,40,Female,White,United States,United States,United States,English,No,Part-Time
+English,31,Male,Black,Zimbabwe,South Africa,Zimbabwe,Other,No,Full-Time
+English,32,Female,White,Canada,Canada,Canada,English,No,Part-Time
+English,58,Female,White,United States,United States,United States,English,No,Other
+English,25,Female,Black,United States,United States,United States,English,Yes,Part-Time
+English,21,Female,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Part-Time
+English,18,Female,White,United States,United States,United States,English,Yes,Other
+English,31,Male,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"Esperanto, English",25,Female,Asian,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+English,18,Female,White,United States,United States,United States,English,Yes,Full-Time
+English,33,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Other
+English,36,Female,White,United States,United States,United States,English,No,DATA_EXPIRED
+English,35,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+"Hungarian, English",30,Female,White,Hungary,Germany,Hungary,Hungarian,DATA_EXPIRED,DATA_EXPIRED
+English,59,Female,White,United States,United States,United States,English,DATA_EXPIRED,Full-Time
+English,51,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,20,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Unemployed (and job seeking)
+English,43,Female,White,United States,United States,United States,English,No,Full-Time
+English,32,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,28,Female,Black,South Africa,South Africa,South Africa,English,DATA_EXPIRED,DATA_EXPIRED
+English,23,Female,White,United States,United States,United States,English,No,Part-Time
+English,51,Female,White,United States,United States,United States,English,No,Full-Time
+English,35,Female,Black,United States,United States,United States,English,DATA_EXPIRED,Full-Time
+"English, Italian",32,Female,White,Italy,Italy,Italy,Italian,Yes,Unemployed (and job seeking)
+English,69,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,48,Female,White,United States,United States,United States,English,No,Part-Time
+English,41,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,31,Female,White,United States,United States,United States,English,Yes,Full-Time
+English,28,Female,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Full-Time
+English,30,Female,Asian,United Kingdom,United Kingdom,United Kingdom,English,No,Due to start a new job within the next month
+English,24,Female,Black,Nigeria,United Kingdom,Nigeria,English,Yes,Full-Time
+English,29,Female,White,Australia,Australia,Australia,Other,No,DATA_EXPIRED
+English,49,Female,White,United States,United States,United States,English,No,Full-Time
+English,34,Female,Prefer not to say,United States,United States,United States,English,No,Full-Time
+"English, Italian, French, Spanish",45,Female,White,Italy,Italy,Italy,English,No,Full-Time
+English,50,Female,White,Ireland,Ireland,Ireland,English,No,DATA_EXPIRED
+English,61,Female,Black,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,28,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,71,Female,White,United States,United States,United States,English,No,Part-Time
+English,50,Female,Asian,India,United Kingdom,United Kingdom,English,No,Part-Time
+English,64,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+"English, French",23,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,65,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,52,Female,Asian,DATA_EXPIRED,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+English,27,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,20,Female,Asian,India,United Kingdom,India,Hindi,Yes,Full-Time
+English,65,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,45,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,36,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Unemployed (and job seeking)
+English,45,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,36,Female,White,United States,United States,United States,English,No,Full-Time
+English,64,Female,White,United States,United States,United States,English,No,Part-Time
+"Swedish, English",63,Female,White,Turkey,Sweden,Sweden,Turkish,No,Full-Time
+English,43,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,45,Female,White,United States,United States,United States,English,Yes,Full-Time
+English,47,Female,White,United States,United States,United States,English,No,Full-Time
+"Polish, English",20,Female,White,Poland,Poland,Poland,Polish,DATA_EXPIRED,DATA_EXPIRED
+English,20,Female,Black,United States,United States,United States,English,Yes,Full-Time
+English,25,Female,Black,United States,United States,United States,English,No,Full-Time
+English,31,Female,Mixed,United States,United States,United States,English,No,Part-Time
+English,20,Female,Asian,United States,United States,India,English,Yes,Other
+English,34,Female,White,United Kingdom,United Kingdom,France,English,DATA_EXPIRED,DATA_EXPIRED
+English,56,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,31,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,52,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,25,Female,Black,United States,United States,United States,English,Yes,Full-Time
+English,25,Female,Black,Nigeria,United Kingdom,Nigeria,English,Yes,Full-Time
+English,34,Female,White,United States,United States,United States,English,No,Full-Time
+"English, French",31,Female,Black,Senegal,Canada,Canada,English,Yes,Full-Time
+English,32,Female,White,United States,United States,United States,English,Yes,Part-Time
+English,30,Female,Black,United States,United States,United States,English,No,Part-Time
+English,49,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Part-Time
+English,51,Female,Black,United States,United States,United States,English,No,DATA_EXPIRED
+English,31,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,33,Female,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,Full-Time
+English,28,Female,White,United States,United States,United States,English,DATA_EXPIRED,DATA_EXPIRED
+English,36,Female,Black,South Africa,South Africa,South Africa,English,Yes,Other
+"Armenian, English",24,Female,Other,Syrian Arab Republic,Canada,Armenia,Armenian,No,Part-Time
+English,36,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,18,Female,Asian,Canada,Canada,Canada,English,Yes,Part-Time
+English,43,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,54,Female,White,United States,United States,United States,English,No,Part-Time
+English,23,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+"English, French",34,Female,White,Canada,United Kingdom,Canada,French,No,Full-Time
+English,28,Female,White,United States,United States,United States,English,No,Full-Time
+English,23,Female,Black,South Africa,South Africa,South Africa,English,Yes,Part-Time
+English,56,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+"Czech, Danish, Dutch, English, Greek",37,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,23,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+"Afrikaans, Chinese, English, French, German",19,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,35,Female,Black,Nigeria,United Kingdom,Nigeria,English,No,Full-Time
+"English, Afrikaans",65,Female,Black,South Africa,South Africa,South Africa,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,45,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,51,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,65,Female,White,United States,United States,United States,English,No,Full-Time
+English,53,Female,Mixed,South Africa,South Africa,South Africa,English,No,Full-Time
+English,64,Female,White,United States,United States,United States,English,No,Full-Time
+English,36,Female,White,South Africa,South Africa,Portugal,English,No,Part-Time
+"English, German, Hindi, Mandarin, Thai",26,Female,Mixed,United States,Germany,Germany,English,Yes,Part-Time
+English,26,Female,Black,Nigeria,United Kingdom,Nigeria,English,DATA_EXPIRED,DATA_EXPIRED
+English,34,Female,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Other
+English,34,Female,White,United States,United States,United States,English,Yes,Part-Time
+English,38,Female,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Part-Time
+English,30,Female,White,United States,United States,United States,English,Yes,Full-Time
+"Swahili, Japanese, English",27,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,30,Female,White,United States,United States,United States,English,No,Full-Time
+English,38,Female,Black,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,54,Female,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+English,38,Female,Black,South Africa,South Africa,South Africa,English,Yes,Unemployed (and job seeking)
+English,23,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,40,Female,Black,United States,United States,United States,English,No,Full-Time
+English,26,Female,Black,United States,United States,United States,English,No,Full-Time
+English,20,Female,Black,United States,United States,United States,English,Yes,Full-Time
+English,63,Female,White,United States,United States,United States,English,No,Full-Time
+English,50,Female,White,United States,United States,United States,English,No,Full-Time
+"English, Other",41,Female,Black,South Africa,South Africa,South Africa,Other,Yes,Full-Time
+English,26,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,DATA_EXPIRED
+English,37,Female,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+"English, Korean",32,Female,Asian,Korea,Canada,Canada,Korean,No,Full-Time
+English,25,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,41,Female,Black,United States,United States,United States,English,No,Part-Time
+English,43,Female,White,United States,United States,United States,English,No,Full-Time
+English,38,Female,White,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,42,Female,DATA_EXPIRED,United States,United States,United States,English,No,Full-Time
+English,30,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,18,Female,Black,South Africa,South Africa,South Africa,English,Yes,Other
+"English, French, Afrikaans",31,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,27,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+"Afrikaans, English",38,Female,Mixed,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,48,Female,White,United Kingdom,United Kingdom,United Kingdom,English,Yes,Part-Time
+English,26,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,Full-Time
+English,40,Female,White,United States,United States,United States,English,Yes,Full-Time
+English,38,Female,White,United States,United States,United States,English,No,Part-Time
+English,29,Female,White,United States,United States,United States,English,DATA_EXPIRED,Full-Time
+English,29,Female,Other,United States,Canada,United States,Spanish,No,Full-Time
+English,33,Female,White,United States,United States,United States,English,No,Part-Time
+"Afrikaans, Dutch, French, English",23,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,36,Female,White,United Kingdom,United Kingdom,United Kingdom,English,DATA_EXPIRED,DATA_EXPIRED
+English,26,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+"English, Afrikaans, Other",29,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,30,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,71,Female,Black,South Africa,South Africa,South Africa,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,53,Female,White,United States,United States,United States,English,No,Full-Time
+English,24,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,31,Female,White,United States,United States,United States,English,No,Full-Time
+English,50,Female,White,United States,United States,United States,English,Yes,Full-Time
+English,22,Male,Black,United States,United States,United States,English,No,Full-Time
+English,40,Female,White,United States,United States,United States,English,No,Unemployed (and job seeking)
+English,53,Female,Mixed,United States,United States,United States,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,22,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,31,Female,White,United Kingdom,United Kingdom,United Kingdom,English,No,"Not in paid work (e.g. homemaker', 'retired or disabled)"
+English,67,Female,White,United States,United States,United States,English,No,Full-Time
+English,31,Female,White,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,58,Female,White,United States,United States,United States,English,No,Part-Time
+English,29,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,29,Female,Black,Kenya,United Kingdom,United Kingdom,English,No,Full-Time
+English,55,Female,Mixed,United States,United States,United States,English,No,Part-Time
+English,24,Female,Asian,South Africa,South Africa,South Africa,English,No,Full-Time
+English,26,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,23,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,43,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,56,Female,Black,South Africa,South Africa,South Africa,English,DATA_EXPIRED,DATA_EXPIRED
+"Arabic, German, Swahili, Portuguese, English",18,Male,Black,South Africa,South Africa,South Africa,English,Yes,Unemployed (and job seeking)
+English,27,Male,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,44,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
+English,21,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,33,Male,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+English,36,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+"Afrikaans, English, French",19,Female,Black,South Africa,South Africa,South Africa,English,No,Full-Time
+"English, Other, Afrikaans",25,Female,Black,South Africa,South Africa,South Africa,English,No,Due to start a new job within the next month
+"English, Thai, Laotian, French",37,Male,Asian,Thailand,Canada,Canada,English,No,Full-Time
+"Polish, English",48,Male,White,Poland,Poland,Poland,Polish,No,Full-Time
+"English, Korean",31,Female,Black,South Africa,South Africa,South Africa,English,No,Part-Time
+"Portuguese, Spanish, English",23,Male,White,Portugal,Portugal,Portugal,Portuguese,Yes,Part-Time
+English,32,Male,White,United States,United States,United States,English,No,Full-Time
+"English, Afrikaans, Dutch, French, German",30,Female,Black,South Africa,South Africa,South Africa,English,Yes,Full-Time
