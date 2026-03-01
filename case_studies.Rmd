@@ -257,8 +257,10 @@ effect_sizes
 #interaction insignificant -> type ii anova
 m <- Anova(lm(x ~ condition * stimulus_set, data = d2a), type = 2)
 m
-effect_sizes <- eta_squared(m, partial = TRUE)
-effect_sizes
+# standardized effects
+lm_model <- lm(x ~ condition * stimulus_set, data = d2a)
+emm <- emmeans(lm_model, pairwise ~ condition)
+eff_size(emm, sigma = sigma(lm_model), edf = df.residual(lm_model))
 
 #q ~ condition*stimulus_set
 m <- glm(q ~ condition*stimulus_set, family = "binomial", d2a)
@@ -270,9 +272,8 @@ tab_model(m, transform = "exp")
 #x ~ condition*stimulus_set + summary
 m <- lmer(x ~ condition*stimulus_set + (1|summary), d2b)
 summary(m)
-# Standardized coefficients
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d2b$x), edf = df.residual(m))
 
 #corrected p-values for case-message comparisons
 p <- c(0.001735, 0.0478, 0.3468)
@@ -283,9 +284,8 @@ p.adjust(p, method = "holm")
 #x ~ condition*stimulus_set
 m <- lmer(x ~ condition + (1|stimulus_set), d2a)
 summary(m)
-# Standardized coefficients
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d2b$x), edf = df.residual(m))
 
 #q ~ condition*stimulus_set
 m <- glmer(q ~ condition + (1|stimulus_set), family = "binomial", d2a)
@@ -299,8 +299,8 @@ tab_model(m, transform = "exp")
 m <- lmer(x ~ condition + (1|stimulus_set) + (1|summary), d2b)
 summary(m)
 # Standardized coefficients
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d2b$x), edf = df.residual(m))
 ```
 
 ##Study 2: Visualize data
@@ -1629,4 +1629,5 @@ sd(d6d$Age)
 table(d6d$Sex)
 table(d6d$Ethnicity.simplified)
 ```
+
 
