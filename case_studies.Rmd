@@ -130,12 +130,17 @@ m <- lmer(x ~ condition * time + (1|id), d1a)
 summary(m)
 emm_int <- emmeans(m, pairwise ~ condition | time)
 eff_size(emm_int, sigma = sd(d1a$x), edf = df.residual(m))
+emm_time <- emmeans(m, pairwise ~ time)
+eff_size(emm_time, sigma = sd(d1a$x), edf = df.residual(m))
+emm_int <- emmeans(m, pairwise ~ time | condition)
+eff_size(emm_int, sigma = sd(d1a$x), edf = df.residual(m))
+standardize_parameters(m)
 
 #Part 2 with item properly added as a random variable
 m <- lmer(x ~ condition + (1|summary), d1b)
 summary(m)
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d1b$x), edf = df.residual(m))
 
 # # # Scale validation # # #
 items <- d1a[, c("a", "u", "v", "i", "p")]
@@ -475,17 +480,20 @@ d3_ttest <- d3 %>%
 ###Study 3a: Analyses
 ```{r}
 # effect of lesson on learning general message
-m <- t.test(score ~ time, d3_ttest, paired = T)
+m <- t.test(d3_ttest$score[d3_ttest$time == "pre_test_score"],
+            d3_ttest$score[d3_ttest$time == "post_test_score"],
+            paired = TRUE)
 m
-cohens_d(score ~ time, data = d3_ttest)
+cohens_d(d3_ttest$score[d3_ttest$time == "pre_test_score"],
+         d3_ttest$score[d3_ttest$time == "post_test_score"],
+         paired = TRUE)
 
 # a linear mixed effects model testing the correlation between insight ratings and change in quiz scores (with participant id as a random intercept)
 # have to deviate from prereg because the random effect is literally unrunable...
 m <- lm(x ~ delta, d3)
 summary(m)
 # Standardized coefficients
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+standardize_parameters(m, method = "refit")
 
 # # # # Exploratory # # # #
 # remove inattentive students
@@ -495,8 +503,26 @@ d3_positive <- d3 %>%
 m <- lm(x ~ delta, d3_positive)
 summary(m)
 # Standardized coefficients
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+standardize_parameters(m, method = "refit")
+
+# remove the 1+ sd'ers
+d3_ttest_small <- d3_ttest %>% 
+  filter(x < mean(x) + sd(x))
+
+d3_small <- d3 %>% 
+  filter(x < mean(x) + sd(x))
+
+m <- t.test(d3_ttest$score[d3_ttest$time == "pre_test_score"],
+            d3_ttest$score[d3_ttest$time == "post_test_score"],
+            paired = TRUE)
+m
+cohens_d(score ~ time, data = d3_ttest)
+
+# analysis
+m <- lm(x ~ delta, d3_small)
+summary(m)
+# Standardized coefficients
+standardize_parameters(m, method = "refit")
 ```
 
 ##Study 3b
@@ -528,8 +554,8 @@ d3b <- i.p %>%
 m <- lmer(x ~ condition + (1|summary), d3b)
 summary(m)
 # Standardized coefficients
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d3b$x), edf = df.residual(m))
 ```
 
 ###Study 3: Visualization
@@ -751,9 +777,7 @@ d4a <- df %>%
 # # # Preregistered # # #
 m <- lmer(mean ~ type*condition + (1|stimulus) + (1|id), d4a)
 summary(m)
-# effect size
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+standardize_parameters(m)
 
 # # # Exploratory # # #
 #paired
@@ -763,8 +787,8 @@ d.r <- d4a %>%
 m <- lmer(mean ~ type + (1|stimulus) + (1|id), d.r)
 summary(m)
 # effect size
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm_r <- emmeans(m, pairwise ~ type)
+eff_size(emm_r, sigma = sd(d.r$mean), edf = df.residual(m))
 
 #message v case irrelevant
 d.i <- d4a %>% 
@@ -772,8 +796,8 @@ d.i <- d4a %>%
 m <- lmer(mean ~ type + (1|stimulus) + (1|id), d.i)
 summary(m)
 # effect size
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm_r <- emmeans(m, pairwise ~ type)
+eff_size(emm_r, sigma = sd(d.i$mean), edf = df.residual(m))
 
 #ergodicity
 d4h <- d4a %>% 
@@ -900,18 +924,9 @@ d4b <- data_summary %>%
 # # # # Preregistered # # # #
 m <- lmer(mean ~ type*condition + (1|id) + (1|stimulus), d4b)
 summary(m)
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
-
-# post-hoc unpacking of effect
-m <- lmer(mean ~ condition + (1|id) + (1|stimulus), d4b %>% filter(condition != "message"))
-summary(m)
-m <- lmer(mean ~ condition + (1|id) + (1|stimulus), d4b %>% filter(condition != "relevant"))
-summary(m)
-m <- lmer(mean ~ condition + (1|id) + (1|stimulus), d4b %>% filter(condition != "irrelevant"))
-summary(m)
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+summary(emm$contrasts, adjust = "none")
+eff_size(emm, sigma = sd(d4b$mean), edf = df.residual(m))
 
 # # # # Exploratory # # # #
 m1 <- lmer(mean ~ type*condition + (1|stimulus) + (1|true_case) + (1|id), d4b)
@@ -928,21 +943,18 @@ AIC(m2)
 AIC(m3)
 AIC(m4)
 
-standardized_result <- standardize_parameters(m4)
-print(standardized_result)
+emm4 <- emmeans(m4, pairwise ~ condition)
+summary(emm4$contrasts, adjust = "none")
+eff_size(emm4, sigma = sd(d4b$mean), edf = df.residual(m4))
 
 # post-hoc unpacking of effect
 
 m5 <- lmer(mean ~ condition + (1|id) + (1|true_case), d4b %>% filter(condition != "message"))
 summary(m5)
-standardized_result <- standardize_parameters(m5)
-print(standardized_result)
 m6 <- lmer(mean ~ condition + (1|id) + (1|true_case), d4b %>% filter(condition != "relevant"))
 summary(m6)
 m7 <- lmer(mean ~ condition + (1|id) + (1|true_case), d4b %>% filter(condition != "irrelevant"))
 summary(m7)
-standardized_result <- standardize_parameters(m7)
-print(standardized_result)
 
 #corrected p-values
 p <- c(0.00000017356, 0.411, 0.00000000647, 0.01009, 0.00334)
@@ -995,9 +1007,8 @@ d4c <- data_summary %>%
 ```{r}
 m <- lmer(mean ~ condition + (1|id) + (1|true_case) + (1|stimulus), d4c)
 summary(m)
-
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d4c$mean), edf = df.residual(m))
 ```
 
 ##Study 4d (posttest)
@@ -1030,9 +1041,8 @@ d4d <- d4d %>%
 ```{r}
 m <- lmer(interest ~ condition + (1|stimulus), d4d)
 summary(m)
-
-standardized_result <- standardize_parameters(m)
-print(standardized_result)
+emm <- emmeans(m, pairwise ~ condition)
+eff_size(emm, sigma = sd(d4c$mean), edf = df.residual(m))
 
 # # # Scale Validity # # #
 items <- d4d[, c("int", "share", "surp", "mem", "eng")]
